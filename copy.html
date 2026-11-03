@@ -5,39 +5,130 @@
 <div style="font-size: 18px; font-weight: bold; color: #56aaff;">CLAN</div>
 <div style="font-size: 10px; color: #b5d7ff; margin-top: 7px;">UNITED &bull; FEARLESS &bull; VICTORIOUS</div>
 </div>
-<!-- STATUS -->
+
+  <!-- to insert -->
 <div style="background: #0b1b31; border: 1px solid #1d5795; border-radius: 10px; padding: 12px; text-align: center; margin-bottom: 9px;">
 <div style="font-size: 12px; color: #72baff; font-weight: bold;">◆ CLAN STATUS</div>
 <div style="font-size: 16px; font-weight: bold; color: #fff; margin-top: 6px;">WE SHALL WIN!</div>
 <div style="font-size: 11px; color: #b8cce5; margin-top: 5px;">One clan. One spirit. One goal.</div>
 </div>
-<!-- CLAN MEMBERS -->
-<div style="background: #0b1b31; border: 1px solid #1d5795; border-radius: 10px; padding: 12px; margin-bottom: 9px; text-align: center;">
+
+<p></p>
+<!-- LIVE CLAN MEMBER COUNTER -->
+<div style="background: #0b1b31; border: 1px solid #398fff; border-radius: 10px; padding: 14px; margin-bottom: 9px; text-align: center; color: white; font-family: Arial,sans-serif;">
 <div style="font-size: 13px; color: #72baff; font-weight: bold;">♟ CLAN MEMBERS</div>
-<div style="font-size: 23px; font-weight: bold; color: #fff; margin-top: 7px;">[MEMBER COUNT]</div>
+<div id="clan-count" style="font-size: 29px; font-weight: bold; color: white; margin: 8px 0;">Loading...</div>
 <div style="font-size: 11px; color: #b8cce5;">Growing stronger together!</div>
+<div style="border-top: 1px solid #1d5795; margin: 13px 0;"></div>
+<div style="font-size: 13px; color: #72baff; font-weight: bold; margin-bottom: 10px;">♛ LATEST 5 MEMBERS</div>
+<div id="latest-members" style="font-size: 12px; text-align: left; line-height: 2; color: white;">Loading newest warriors...</div>
+<div id="clan-updated" style="font-size: 9px; color: #7899bf; margin-top: 10px;">Connecting to Chess.com...</div>
 </div>
-<!-- LEADERS -->
+<p>
+<script>
+(async function() {
+  const club = "weshallwin-clan";
+
+  async function updateClan() {
+    try {
+      const [profileResponse, membersResponse] =
+        await Promise.all([
+          fetch("https://api.chess.com/pub/club/" + club),
+          fetch("https://api.chess.com/pub/club/" + club + "/members")
+        ]);
+
+      if (!profileResponse.ok || !membersResponse.ok) {
+        throw new Error("Unable to load club data");
+      }
+
+      const profile = await profileResponse.json();
+      const members = await membersResponse.json();
+
+      document.getElementById("clan-count").textContent =
+        Number(profile.members_count).toLocaleString();
+
+      const allMembers = [
+        ...(members.weekly || []),
+        ...(members.monthly || []),
+        ...(members.all_time || [])
+      ];
+
+      const unique = new Map();
+
+      allMembers.forEach(member => {
+        unique.set(member.username.toLowerCase(), member);
+      });
+
+      const latest = [...unique.values()]
+        .sort((a, b) => b.joined - a.joined)
+        .slice(0, 5);
+
+      const list = document.getElementById("latest-members");
+
+      list.replaceChildren();
+
+      latest.forEach((member, index) => {
+        const item = document.createElement("div");
+        const name = document.createElement("span");
+        const date = document.createElement("div");
+
+        name.textContent =
+          ["♛ ", "♕ ", "♞ ", "♟ ", "♟ "][index] +
+          member.username;
+
+        name.style.color = "#ffffff";
+        name.style.fontWeight = "bold";
+
+        date.textContent = member.joined
+          ? new Date(member.joined * 1000).toLocaleDateString()
+          : "Join date unavailable";
+
+        date.style.color = "#78a9d8";
+        date.style.fontSize = "10px";
+
+        item.append(name, date);
+        item.style.marginBottom = "7px";
+        list.appendChild(item);
+      });
+
+      document.getElementById("clan-updated").textContent =
+        "Last updated: " + new Date().toLocaleTimeString();
+
+    } catch (error) {
+      document.getElementById("clan-count").textContent = "Unavailable";
+      document.getElementById("latest-members").textContent =
+        "Could not load member information.";
+      document.getElementById("clan-updated").textContent =
+        "Please try again later.";
+    }
+  }
+
+  updateClan();
+  setInterval(updateClan, 300000);
+})();
+</script>
+</p>
+
 <div style="background: #0b1b31; border: 1px solid #1d5795; border-radius: 10px; padding: 12px; margin-bottom: 9px;">
 <div style="font-size: 13px; color: #72baff; font-weight: bold; margin-bottom: 8px;">♛ CLAN LEADERSHIP</div>
-<div style="font-size: 12px; color: #fff; line-height: 2;">♔ Super Admin: [USERNAME]<br />♕ Admins: [USERNAMES]<br />♞ Coordinators: [USERNAMES]</div>
+<div style="font-size: 12px; color: #fff; line-height: 2;">♔ Super Admins: @knighthunter2026 and  @weshallwin</div>
 </div>
-<!-- ABOUT -->
+
 <div style="background: #0b1b31; border: 1px solid #1d5795; border-radius: 10px; padding: 12px; margin-bottom: 9px;">
 <div style="font-size: 13px; font-weight: bold; color: #72baff; margin-bottom: 7px;">♞ WELCOME TO THE CLAN</div>
 <div style="font-size: 12px; line-height: 1.7; color: #fff;">Welcome to WE SHALL WIN CLAN! A community built around chess, friendship, teamwork, and determination. Together we learn, compete, support one another, and strive for victory.</div>
 </div>
-<!-- VALUES -->
+
 <div style="background: #0b1b31; border: 1px solid #1d5795; border-radius: 10px; padding: 12px; margin-bottom: 9px;">
 <div style="font-size: 13px; font-weight: bold; color: #72baff; margin-bottom: 7px;">⚔ WHAT WE STAND FOR</div>
 <div style="font-size: 12px; line-height: 2; color: #fff;">♟ Strategic chess and improvement<br />🏆 Competitive tournaments<br />🤝 Friendship and teamwork<br />🔥 Dedication and discipline<br />♛ Respect for every player</div>
 </div>
-<!-- MOTTO -->
+
 <div style="background: linear-gradient(135deg,#103c70,#0b1b31); border: 1px solid #398fff; border-radius: 10px; padding: 13px; text-align: center; margin-bottom: 9px;">
 <div style="font-size: 17px; font-weight: bold; color: #fff;">READY TO JOIN THE BATTLE?</div>
 <div style="font-size: 11px; color: #c4e1ff; margin: 7px 0 11px;">Make your move. Stand with the clan. Fight for victory!</div>
 <a href="https://www.chess.com/club/weshallwin-clan" style="display: block; background: #2584ff; color: #fff; text-decoration: none; font-weight: bold; font-size: 12px; padding: 11px; border-radius: 7px;">VISIT OUR CLAN ♟</a></div>
-<!-- LINKS -->
+
 <div style="background: #0b1b31; border: 1px solid #1d5795; border-radius: 10px; padding: 11px; margin-bottom: 9px; text-align: center;">
 <div style="font-size: 12px; font-weight: bold; color: #72baff; margin-bottom: 8px;">QUICK LINKS</div>
 <div style="font-size: 11px; line-height: 2;"><a href="https://www.chess.com/club/weshallwin-clan" style="color: #c5e1ff; text-decoration: none;">Clan Home</a> <span style="color: #4778aa;"> &bull; </span> <a href="https://www.chess.com/home" style="color: #c5e1ff; text-decoration: none;">Chess.com Home</a></div>
